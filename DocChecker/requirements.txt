@@ -1,0 +1,8 @@
+PySide6>=6.8.1
+PySide6_Addons>=6.8.1
+PySide6_Essentials>=6.8.1
+shiboken6>=6.8.1
+python-docx>=0.8.11
+PyMuPDF>=1.23.0
+pillow>=10.2.0
+darkdetect>=0.8.0 

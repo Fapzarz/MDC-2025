@@ -1,0 +1,9 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/icons">
+        <file>../icons/check-white.svg</file>
+        <file>../icons/docx_icon.svg</file>
+        <file>../icons/pdf_icon.svg</file>
+        <file>../icons/trash_icon.svg</file>
+    </qresource>
+</RCC> 
