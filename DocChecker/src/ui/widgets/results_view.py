@@ -20,6 +20,9 @@ class ResultsView(QWidget):
         # Define color schemes based on mode
         self.colors = self._get_color_scheme()
         
+        # Language manager will be set by MainWindow
+        self.language_manager = None
+        
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setSpacing(0)  # Mengurangi spasi antara elemen
@@ -100,6 +103,8 @@ class ResultsView(QWidget):
                     border: 1px solid #e2e8f0;
                     border-radius: 8px;
                     font-size: 11pt;
+                    background-color: #ffffff;
+                    color: #1e293b;
                 }
                 QHeaderView::section {
                     background-color: #f1f5f9;
@@ -117,6 +122,9 @@ class ResultsView(QWidget):
                 }
             """)
         self.details_layout.addWidget(self.issues_table)
+        
+        # Get translations if language manager is available
+        self._update_translations()
         
         # Add all tabs
         self.tab_widget.addTab(self.summary_tab, "Summary")
@@ -205,10 +213,19 @@ class ResultsView(QWidget):
         text_color = colors['text_primary']
         text_secondary = colors['text_secondary']
         
+        # Get translations if available
+        no_document_text = "No Document Checked Yet"
+        instruction_text = "Select a file from the list or add new files to check."
+        
+        if hasattr(self, "language_manager") and self.language_manager:
+            translate = self.language_manager.translate
+            no_document_text = translate("no_document")
+            instruction_text = translate("select_file_instruction")
+        
         self.summary_text.setHtml(
             f"<div style='text-align:center; margin-top:50px;'>"
-            f"<h2 style='margin-bottom:20px; color:{text_color};'>No Document Checked Yet</h2>"
-            f"<p style='font-size:14px; color:{text_secondary};'>Select a file from the list or add new files to check.</p>"
+            f"<h2 style='margin-bottom:20px; color:{text_color};'>{no_document_text}</h2>"
+            f"<p style='font-size:14px; color:{text_secondary};'>{instruction_text}</p>"
             "</div>"
         )
         self.issues_table.setRowCount(0)
@@ -769,6 +786,9 @@ class ResultsView(QWidget):
                 }
             """)
         
+        # Update translations
+        self._update_translations()
+        
         # If there's a current result, redisplay it with the new theme
         if self.current_result:
             self.display_result(self.current_result)
@@ -777,4 +797,46 @@ class ResultsView(QWidget):
             self.display_batch_summary("", self.batch_results)
         else:
             # Display empty state with updated colors
-            self.display_empty() 
+            self.display_empty()
+
+    def _update_translations(self):
+        """Update UI elements with translations"""
+        # Default tab names
+        summary_text = "Summary"
+        details_text = "Details"
+        files_text = "Files"
+        
+        # Update table headers
+        issue_type = "Issue Type"
+        location = "Location"
+        found = "Found"
+        expected = "Expected"
+        
+        # Get translations if language manager is available
+        if hasattr(self, "language_manager") and self.language_manager:
+            translate = self.language_manager.translate
+            summary_text = translate("summary")
+            details_text = translate("details")
+            files_text = translate("files")
+            
+            # Update table headers
+            issue_type = translate("issue_type")
+            location = translate("location")
+            found = translate("found")
+            expected = translate("expected")
+        
+        # Update tab names
+        # Get current tab index to preserve selection
+        current_index = self.tab_widget.currentIndex()
+        
+        # Update tabs
+        self.tab_widget.setTabText(0, summary_text)
+        self.tab_widget.setTabText(1, details_text)
+        self.tab_widget.setTabText(2, files_text)
+        
+        # Restore tab selection
+        self.tab_widget.setCurrentIndex(current_index)
+        
+        # Update table headers if they exist
+        if hasattr(self, "issues_table"):
+            self.issues_table.setHorizontalHeaderLabels([issue_type, location, found, expected]) 

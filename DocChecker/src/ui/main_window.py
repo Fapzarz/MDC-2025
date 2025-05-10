@@ -101,8 +101,9 @@ class MainWindow(QMainWindow):
         # Initialize QSettings
         self.settings = QSettings("MDC-2025", "Document Checker")
         
-        # theme_manager will be set by main.py
+        # theme_manager and language_manager will be set by main.py
         self.theme_manager = None
+        self.language_manager = None
         
         # Setup logging based on settings
         setup_logging(self.settings)
@@ -180,28 +181,38 @@ class MainWindow(QMainWindow):
         title_layout.setContentsMargins(0, 0, 0, 0)
         title_layout.setSpacing(0)
         
-        title_label = QLabel("MetastroDocChecker")
-        title_label.setObjectName("heading")
-        title_label.setStyleSheet("font-size: 22px; font-weight: 600; margin: 0; padding: 0;")
+        # Get translations if language manager is available
+        app_title = "MetastroDocChecker"
+        app_subtitle = "Document Format Validator"
+        settings_text = "⚙️ Settings"
         
-        subtitle_label = QLabel("Document Format Validator")
-        subtitle_label.setObjectName("subheading")
-        subtitle_label.setStyleSheet("color: #64748b; font-size: 14px; font-weight: 400; margin: 0; padding: 0;")
+        if hasattr(self, "language_manager"):
+            app_title = self.language_manager.translate("app_title")
+            app_subtitle = self.language_manager.translate("app_subtitle")
+            settings_text = "⚙️ {self.language_manager.translate('settings')}"
         
-        title_layout.addWidget(title_label)
-        title_layout.addWidget(subtitle_label)
+        self.title_label = QLabel(app_title)
+        self.title_label.setObjectName("heading")
+        self.title_label.setStyleSheet("font-size: 22px; font-weight: 600; margin: 0; padding: 0;")
+        
+        self.subtitle_label = QLabel(app_subtitle)
+        self.subtitle_label.setObjectName("subheading")
+        self.subtitle_label.setStyleSheet("color: #64748b; font-size: 14px; font-weight: 400; margin: 0; padding: 0;")
+        
+        title_layout.addWidget(self.title_label)
+        title_layout.addWidget(self.subtitle_label)
         
         header_layout.addWidget(logo_label)
         header_layout.addWidget(title_widget)
         header_layout.addStretch(1)
         
         # Modern settings button
-        settings_btn = QPushButton("⚙️ Settings")
-        settings_btn.setObjectName("secondary")
-        settings_btn.clicked.connect(self._show_settings)
-        settings_btn.setMinimumHeight(36)
-        settings_btn.setMaximumWidth(120)
-        header_layout.addWidget(settings_btn)
+        self.settings_btn = QPushButton(settings_text)
+        self.settings_btn.setObjectName("secondary")
+        self.settings_btn.clicked.connect(self._show_settings)
+        self.settings_btn.setMinimumHeight(36)
+        self.settings_btn.setMaximumWidth(120)
+        header_layout.addWidget(self.settings_btn)
         
         self.main_layout.addWidget(header_widget)
         
@@ -218,12 +229,29 @@ class MainWindow(QMainWindow):
     def _setup_file_panel(self):
         """Setup the left panel with file drop area and controls"""
         logger.debug("Setup panel file UI.")
-        # File drop area group with modern styling
-        drop_group = QGroupBox("Drag & Drop")
-        drop_group.setStyleSheet("QGroupBox { font-weight: 600; font-size: 14px; }")
-        drop_layout = QVBoxLayout(drop_group)
         
-        self.drop_area = QLabel("Drop your DOCX or PDF files here\nor click to browse files")
+        # Get translations if language manager is available
+        drag_drop_text = "Drag & Drop"
+        drop_instruction = "Drop your DOCX or PDF files here\nor click to browse files"
+        selected_files_text = "Selected Files"
+        add_files_text = "Add Files"
+        clear_all_text = "Clear All"
+        check_all_text = "Check All Files"
+        
+        if hasattr(self, "language_manager"):
+            drag_drop_text = self.language_manager.translate("drag_drop")
+            drop_instruction = self.language_manager.translate("drop_instruction")
+            selected_files_text = self.language_manager.translate("selected_files")
+            add_files_text = self.language_manager.translate("add_files")
+            clear_all_text = self.language_manager.translate("clear_all")
+            check_all_text = self.language_manager.translate("check_all_files")
+        
+        # File drop area group with modern styling
+        self.drop_group = QGroupBox(drag_drop_text)
+        self.drop_group.setStyleSheet("QGroupBox { font-weight: 600; font-size: 14px; }")
+        drop_layout = QVBoxLayout(self.drop_group)
+        
+        self.drop_area = QLabel(drop_instruction)
         self.drop_area.setAlignment(Qt.AlignCenter)
         self.drop_area.setStyleSheet("""
             QLabel {
@@ -240,9 +268,9 @@ class MainWindow(QMainWindow):
         drop_layout.addWidget(self.drop_area)
         
         # File list group with modern styling
-        file_group = QGroupBox("Selected Files")
-        file_group.setStyleSheet("QGroupBox { font-weight: 600; font-size: 14px; }")
-        file_layout = QVBoxLayout(file_group)
+        self.file_group = QGroupBox(selected_files_text)
+        self.file_group.setStyleSheet("QGroupBox { font-weight: 600; font-size: 14px; }")
+        file_layout = QVBoxLayout(self.file_group)
         
         self.file_list = FileListWidget()
         file_layout.addWidget(self.file_list)
@@ -251,11 +279,11 @@ class MainWindow(QMainWindow):
         btn_layout = QHBoxLayout()
         btn_layout.setSpacing(8)
         
-        self.add_file_btn = QPushButton("Add Files")
+        self.add_file_btn = QPushButton(add_files_text)
         self.add_file_btn.setObjectName("secondary")
         self.add_file_btn.clicked.connect(self._open_file_dialog)
         
-        self.clear_files_btn = QPushButton("Clear All")
+        self.clear_files_btn = QPushButton(clear_all_text)
         self.clear_files_btn.setObjectName("secondary")
         self.clear_files_btn.clicked.connect(self.file_list.clear)
         
@@ -263,25 +291,37 @@ class MainWindow(QMainWindow):
         btn_layout.addWidget(self.clear_files_btn)
         file_layout.addLayout(btn_layout)
         
-        self.check_files_btn = QPushButton("Check All Files")
+        self.check_files_btn = QPushButton(check_all_text)
         self.check_files_btn.clicked.connect(self._check_all_files)
         file_layout.addWidget(self.check_files_btn)
         
         # Add to left panel
-        self.left_layout.addWidget(drop_group)
-        self.left_layout.addWidget(file_group, 1)
+        self.left_layout.addWidget(self.drop_group)
+        self.left_layout.addWidget(self.file_group, 1)
         
     def _setup_results_panel(self):
         """Setup the right panel with results view"""
         logger.debug("Setup panel hasil UI.")
-        results_group = QGroupBox("Results")
-        results_group.setStyleSheet("QGroupBox { font-weight: 600; font-size: 14px; }")
-        results_layout = QVBoxLayout(results_group)
+        
+        # Get translations if language manager is available
+        results_text = "Results"
+        
+        if hasattr(self, "language_manager"):
+            results_text = self.language_manager.translate("results")
+        
+        self.results_group = QGroupBox(results_text)
+        self.results_group.setStyleSheet("QGroupBox { font-weight: 600; font-size: 14px; }")
+        results_layout = QVBoxLayout(self.results_group)
         
         self.results_view = ResultsView()
+        
+        # Pass language manager to results view if available
+        if hasattr(self, "language_manager"):
+            self.results_view.language_manager = self.language_manager
+            
         results_layout.addWidget(self.results_view)
         
-        self.right_layout.addWidget(results_group)
+        self.right_layout.addWidget(self.results_group)
         
     def _connect_signals(self):
         """Connect all signals between components"""
@@ -296,6 +336,10 @@ class MainWindow(QMainWindow):
         # Connect theme manager signals if available
         if self.theme_manager:
             self.theme_manager.theme_changed.connect(self._handle_theme_changed)
+            
+        # Connect language manager signals if available
+        if self.language_manager:
+            self.language_manager.language_changed.connect(self._handle_language_changed)
         
     def _disconnect_old_signals(self):
         """Disconnect signals from the old document_checker instance."""
@@ -424,6 +468,11 @@ class MainWindow(QMainWindow):
         logger.debug("Membuka dialog pengaturan.")
         dialog = SettingsDialog(self.settings, self) # Pass QSettings instance
         dialog.settings_changed.connect(self._handle_settings_changed)
+        
+        # Get current translation for titlebar
+        if self.language_manager:
+            dialog.setWindowTitle(self.language_manager.translate("settings_title"))
+        
         dialog.exec()
         
     @Slot()
@@ -443,6 +492,10 @@ class MainWindow(QMainWindow):
         # Apply theme if theme manager is available
         if self.theme_manager:
             self.theme_manager.apply_theme()
+            
+        # Apply language if language manager is available
+        if self.language_manager:
+            self.language_manager.apply_language()
         
         self.statusBar().showMessage("Settings saved and applied.", 3000)
         
@@ -530,3 +583,56 @@ class MainWindow(QMainWindow):
                 self.file_list.add_files(file_paths)
                 logger.info(f"{len(file_paths)} file di-drop dan ditambahkan ke daftar.")
             event.acceptProposedAction() 
+
+    def _handle_language_changed(self, language_code: str):
+        """Handle language change event"""
+        logger.info(f"Language changed to: {language_code}")
+        
+        if not self.language_manager:
+            return
+            
+        translate = self.language_manager.translate
+        
+        # Update window title
+        self.setWindowTitle(f"{translate('app_title')} (MDC-2025)")
+        
+        # Update header elements
+        if hasattr(self, "title_label"):
+            self.title_label.setText(translate("app_title"))
+        
+        if hasattr(self, "subtitle_label"):
+            self.subtitle_label.setText(translate("app_subtitle"))
+            
+        if hasattr(self, "settings_btn"):
+            self.settings_btn.setText(f"⚙️ {translate('settings')}")
+            
+        # Update panel titles
+        if hasattr(self, "drop_group"):
+            self.drop_group.setTitle(translate("drag_drop"))
+            
+        if hasattr(self, "drop_area"):
+            self.drop_area.setText(translate("drop_instruction"))
+            
+        if hasattr(self, "file_group"):
+            self.file_group.setTitle(translate("selected_files"))
+            
+        if hasattr(self, "results_group"):
+            self.results_group.setTitle(translate("results"))
+            
+        # Update buttons
+        if hasattr(self, "add_file_btn"):
+            self.add_file_btn.setText(translate("add_files"))
+            
+        if hasattr(self, "clear_files_btn"):
+            self.clear_files_btn.setText(translate("clear_all"))
+            
+        if hasattr(self, "check_files_btn"):
+            self.check_files_btn.setText(translate("check_all_files"))
+            
+        # Update status bar
+        self.statusBar().showMessage(translate("ready"))
+        
+        # Force complete UI refresh
+        self.repaint()
+        
+        self.statusBar().showMessage(f"Language changed to {language_code}", 3000) 

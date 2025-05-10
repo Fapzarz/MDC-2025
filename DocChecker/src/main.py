@@ -5,6 +5,7 @@ from PySide6.QtGui import QGuiApplication, QIcon
 
 from ui.main_window import MainWindow
 from ui.theme_manager import ThemeManager
+from ui.language_manager import LanguageManager
 
 def main():
     # Modern high DPI handling for Qt 6.5+
@@ -34,13 +35,18 @@ def main():
     # Initialize settings
     settings = QSettings("MDC-2025", "Document Checker")
     
+    # Initialize language manager and apply language (before UI is created)
+    language_manager = LanguageManager(settings)
+    translations = language_manager.apply_language()
+    
     # Initialize theme manager and apply theme
     theme_manager = ThemeManager(app, settings)
     theme_manager.apply_theme()
     
-    # Create and show main window - pass theme_manager to constructor
+    # Create and show main window - pass managers to constructor
     window = MainWindow()
     window.theme_manager = theme_manager  # Add theme manager to the window
+    window.language_manager = language_manager  # Add language manager to the window
     window.setWindowTitle("MetastroDocChecker 2025 (MDC-2025)")
     window.show()
     
