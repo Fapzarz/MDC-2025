@@ -1,0 +1,21 @@
+# Screenshot Content Description
+
+This file describes the content of the missing app-screenshot.png file.
+
+## Main Application Screenshot
+
+The main application screenshot shows the MetastroDocChecker 2025 interface with:
+
+1. Application header with logo and settings button
+2. Left panel with:
+   - Drag & drop area for files
+   - List of selected files
+   - Add/Clear/Check buttons
+3. Right panel with:
+   - Results area showing the "No Document Checked Yet" message
+   - Tabs for Summary, Details, and Files
+
+The screenshot displays the application in light mode with the MetastroDocChecker 2025 branding visible in the header.
+
+## Note
+This text file serves as a placeholder. Please capture a real screenshot of the application and save it as "app-screenshot.png" in this directory before publishing to GitHub. 

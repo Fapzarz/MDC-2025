@@ -1,87 +1,68 @@
-# MetastroDocChecker 2025 (MDC-2025)
+# MetastroDocChecker 2025
 
-A modern Windows desktop application for checking document formatting compliance.
+A modern document validation application for ensuring compliance with formatting standards.
+
+## About
+
+MetastroDocChecker 2025 is designed to validate DOCX and PDF documents against predefined formatting standards. It features a modern UI with theme support, batch processing capabilities, and detailed report generation.
+
+## Running the Application
+
+### Requirements
+- Python 3.8 or newer
+- PySide6
+- Other dependencies listed in `requirements.txt`
+
+### Installation
+1. Install dependencies:
+   ```
+   pip install -r requirements.txt
+   ```
+
+2. Run the application:
+   ```
+   python src/main.py
+   ```
+   
+   Alternatively, on Windows, you can use:
+   ```
+   run.bat
+   ```
 
 ## Features
 
-- **Modern UI/UX**: Clean, intuitive interface with both light and dark themes
-- **Format Rules Checking**: Verify documents against predefined formatting rules
-  - Font type (Times New Roman)
-  - Font size (12pt)
-  - Line spacing (1.5)
-  - Margins (4cm left, 3cm right/top/bottom)
-- **Batch Processing**: Check multiple documents simultaneously with multi-threading
-- **Detailed Reports**: View comprehensive formatting issue reports with summary and details view
-- **Customizable Settings**: Adjust rules and preferences as needed
-- **Support for Multiple Formats**: Works with both DOCX and PDF files
-- **Enhanced Performance**: Multi-threaded batch processing for faster document validation
+- **Document Validation**: Check documents against predefined formatting rules
+- **Theme Support**: Light, Dark, and System themes available
+- **Batch Processing**: Process multiple documents at once
+- **Detailed Reports**: Get comprehensive reports on formatting issues
 
-## Requirements
-
-- Windows 10 or later
-- Python 3.8 or later
-- Required Python packages (see requirements.txt)
-
-## Installation
-
-1. Clone or download this repository
-2. Install the required dependencies:
+## Project Structure
 
 ```
-pip install -r requirements.txt
+DocChecker/
+├── resources/              # Application resources
+│   ├── icons/              # Icons used in the application
+│   ├── screenshots/        # Application screenshots
+│   ├── styles/             # QSS stylesheets
+│   └── qss/                # Resource files
+├── src/                    # Source code
+│   ├── core/               # Core functionality
+│   │   ├── document_checker.py    # Document validation logic
+│   │   └── logger_config.py       # Logging configuration
+│   ├── ui/                 # User interface components
+│   │   ├── main_window.py         # Main application window
+│   │   ├── theme_manager.py       # Theme management
+│   │   └── widgets/              # UI widgets
+│   └── main.py             # Application entry point
+├── requirements.txt        # Python dependencies
+├── run.bat                 # Windows batch file to run the application
+└── README.md               # This file
 ```
 
-3. Run the application:
+## Development
 
-```
-python src/main.py
-```
-
-Alternatively, use the included `run.bat` file for easy startup.
-
-## How to Use
-
-1. **Add Documents**: 
-   - Drag and drop files into the application
-   - Or click "Add Files" to select documents through a file dialog
-
-2. **Check Documents**:
-   - Click on a file in the list to check it individually
-   - Or click "Check All Files" to process all added documents at once
-
-3. **View Results**:
-   - Summary tab shows overall status and issues
-   - Details tab shows specific formatting problems
-   - For batch processing, the Files tab lists all processed documents
-
-4. **Customize Settings**:
-   - Click the ⚙️ Settings button to adjust preferences
-   - Modify document rules in the Document Rules tab
-   - Change interface options and export preferences
-
-## Customization
-
-The application allows customization of:
-
-- Document formatting rules (font, size, margins, spacing)
-- Interface theme (Light/Dark/System)
-- Report export settings
-- Default save locations
-
-## Technical Details
-
-- Built using PySide6 (Qt for Python) for modern UI
-- Multi-threaded document processing with QThreadPool
-- Document parsing with python-docx and PyMuPDF
-- Modern high DPI support with Qt 6
-- Dark mode detection and automatic theme switching
+To contribute to this project, please see the main [CONTRIBUTING.md](../CONTRIBUTING.md) file in the parent directory.
 
 ## License
 
-This project is available under the MIT License.
-
-## Acknowledgements
-
-- Built using PySide6 (Qt for Python)
-- Document parsing powered by python-docx and PyMuPDF
-- User interface designed for maximum usability and efficiency 
+This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file in the parent directory for details. 
