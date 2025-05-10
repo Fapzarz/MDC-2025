@@ -95,15 +95,16 @@ class BatchProcessWorker(QRunnable):
         self.is_cancelled = True
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, language_manager=None, theme_manager=None):
+        """Initialize the main window"""
         super().__init__()
         
         # Initialize QSettings
         self.settings = QSettings("MDC-2025", "Document Checker")
         
-        # theme_manager and language_manager will be set by main.py
-        self.theme_manager = None
-        self.language_manager = None
+        # Set managers passed from main.py
+        self.theme_manager = theme_manager
+        self.language_manager = language_manager
         
         # Setup logging based on settings
         setup_logging(self.settings)
@@ -186,10 +187,10 @@ class MainWindow(QMainWindow):
         app_subtitle = "Document Format Validator"
         settings_text = "⚙️ Settings"
         
-        if hasattr(self, "language_manager"):
+        if hasattr(self, "language_manager") and self.language_manager is not None:
             app_title = self.language_manager.translate("app_title")
             app_subtitle = self.language_manager.translate("app_subtitle")
-            settings_text = "⚙️ {self.language_manager.translate('settings')}"
+            settings_text = f"⚙️ {self.language_manager.translate('settings')}"
         
         self.title_label = QLabel(app_title)
         self.title_label.setObjectName("heading")
@@ -238,7 +239,7 @@ class MainWindow(QMainWindow):
         clear_all_text = "Clear All"
         check_all_text = "Check All Files"
         
-        if hasattr(self, "language_manager"):
+        if hasattr(self, "language_manager") and self.language_manager is not None:
             drag_drop_text = self.language_manager.translate("drag_drop")
             drop_instruction = self.language_manager.translate("drop_instruction")
             selected_files_text = self.language_manager.translate("selected_files")
@@ -306,7 +307,7 @@ class MainWindow(QMainWindow):
         # Get translations if language manager is available
         results_text = "Results"
         
-        if hasattr(self, "language_manager"):
+        if hasattr(self, "language_manager") and self.language_manager is not None:
             results_text = self.language_manager.translate("results")
         
         self.results_group = QGroupBox(results_text)
@@ -316,7 +317,7 @@ class MainWindow(QMainWindow):
         self.results_view = ResultsView()
         
         # Pass language manager to results view if available
-        if hasattr(self, "language_manager"):
+        if hasattr(self, "language_manager") and self.language_manager is not None:
             self.results_view.language_manager = self.language_manager
             
         results_layout.addWidget(self.results_view)

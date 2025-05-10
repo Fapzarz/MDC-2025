@@ -44,9 +44,7 @@ def main():
     theme_manager.apply_theme()
     
     # Create and show main window - pass managers to constructor
-    window = MainWindow()
-    window.theme_manager = theme_manager  # Add theme manager to the window
-    window.language_manager = language_manager  # Add language manager to the window
+    window = MainWindow(language_manager=language_manager, theme_manager=theme_manager)
     window.setWindowTitle("MetastroDocChecker 2025 (MDC-2025)")
     window.show()
     
